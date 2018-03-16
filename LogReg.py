@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 #REFERENCES: https://beckernick.github.io/logistic-regression-from-scratch/
 # https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html
 #https://docs.eyesopen.com/toolkits/cookbook/python/plotting/roc.html
+#http://ml-cheatsheet.readthedocs.io/en/latest/logistic_regression.html#cost-function
 
 data = numpy.genfromtxt('MNIST_CVHW3.csv', delimiter=',', dtype=int, skip_header=1)
 #print(data.shape[0], 1) Returns (8200, 1)
@@ -57,7 +58,12 @@ normTrainingLabels = makeBinary(trainingLabels)
 
 # Cost function
 def cost(X, y, b):
-    return numpy.sum((numpy.dot(X, b) - numpy.array(y))**2)
+    pr = prediction(X, b)
+    C1 = -y * numpy.log(pr)
+    C2 = (1 - y) * numpy.log(1 - pr)
+    value = C1 - C2
+    value = value.sum() / len(y)
+    return value
 
 # likelihood function
 def likelihood(data, labels, bvalue):
@@ -117,16 +123,15 @@ def gradientDescent(X, y, b):
     predictions = prediction(X, b)
     sample = X.shape[0]
     error_cost = (predictions - y).transpose()
-    #return -1 / 7800 * numpy.dot(X.transpose(), y - prediction(X, b))
     return -1.0 / sample * numpy.dot(X.transpose(), error_cost)
 
-#Counts the number of true data
-def trueCount(data):
-    return sum(data)
-
-#Counts the number of false data
-def falseCount(data):
-    return (len(data) - trueCount(data))
+# #Counts the number of true data
+# def trueCount(data):
+#     return sum(data)
+#
+# #Counts the number of false data
+# def falseCount(data):
+#     return (len(data) - trueCount(data))
 
 #sigmoid function
 def sigmoid(value):
@@ -140,17 +145,17 @@ def onesMatrix(data):
 def zeroMatrix(data):
     return numpy.zeros(data.shape[1])
 
-def TruePositive(predictionLabels, normTestLabels):
-    return numpy.sum(numpy.logical_and(predictionLabels, normTestLabels))
-
-def TrueNegative(predictionLabels, normTestLabels):
-    return len(normTestLabels) - numpy.sum(numpy.logical_or(predictionLabels, normTestLabels))
-
-def FalsePositive(predictionLabels, normTestLabels):
-    return numpy.sum(numpy.logical_and(predictionLabels == 1, normTestLabels == 0))
-
-def FalseNegative(predictionLabels, normTestLabels):
-    return numpy.sum(numpy.logical_and(predictionLabels == 0, normTestLabels == 1))
+# def TruePositive(predictionLabels, normTestLabels):
+#     return numpy.sum(numpy.logical_and(predictionLabels, normTestLabels))
+#
+# def TrueNegative(predictionLabels, normTestLabels):
+#     return len(normTestLabels) - numpy.sum(numpy.logical_or(predictionLabels, normTestLabels))
+#
+# def FalsePositive(predictionLabels, normTestLabels):
+#     return numpy.sum(numpy.logical_and(predictionLabels == 1, normTestLabels == 0))
+#
+# def FalseNegative(predictionLabels, normTestLabels):
+#     return numpy.sum(numpy.logical_and(predictionLabels == 0, normTestLabels == 1))
 
 def binaryPrediciton(predictionData):
     #array = predictionData
@@ -162,29 +167,31 @@ def binaryPrediciton(predictionData):
     return predictionData
 
 #Plot ROC Curve
-def ROCCurve(predictionData, color, randomline = True):
+def ROCCurve(TPR, FPR, randomline = True):
     plt.figure()
     plt.xlabel("False Positive Rate", fontsize = 16)
     plt.ylabel("True Positive Rate", fontsize = 16)
     plt.title("ROV Curve", fontsize = 16)
 
-    TPR, FPR = CalcAccuracy(predictionData, normTestLabels, color = color)
+    TPR, FPR = CalcAccuracy(predictionData, normTestLabels)
 
-    plt.plot(FPR, TPR, color=color, linewidth = 2, normTestLabels=normTestLabels)
+    plt.plot(FPR, TPR, normTestLabels=normTestLabels)
 
     if randomline:
         x = [0.0, 1.0]
-        plt.plot(x, x, linestyle='dashed', color = 'blue', linewidth = 2, label='random')
+        plt.plot(x, x)
 
-    plt.xlim(0.0, 0.1)
-    plt.ylim(0.0, 0.1)
+    plt.xlim(0.0, 1.0)
+    plt.ylim(0.0, 1.0)
+
+def addZeroOne(rates):
 
 
 
 # Getting the b value (weights)
 bvalue = numpy.zeros(len(normTrainData[0]))  # weights
-learningRate = 1e-5
-iterator = 100
+learningRate = 1e-4
+iterator = 1000
 
 for x in range(0, iterator):
     bvalue = bvalue + learningRate * gradientDescent(normTrainData, normTrainingLabels, bvalue)
@@ -193,9 +200,14 @@ for x in range(0, iterator):
 pr = prediction(normTestData, bvalue)
 print(binaryPrediciton(pr))
 
+plt.plot(cost(normTrainingLabels, normTestLabels, bvalue))
+plt.show()
+
 #ac = accuracy(pr, normTestLabels)
 TPR, FPR = CalcAccuracy(pr, normTestLabels)
 print("TPR: {} \nFPR: {}".format(TPR, FPR))
+TPRArray = []
+FPRArray = []
 #print(TruePositive(pr, normTestLabels))
 #print(pr)
 #print(ac)
@@ -204,5 +216,7 @@ print("TPR: {} \nFPR: {}".format(TPR, FPR))
 #plt.plot(bvalue)
 #plt.plot(gradientDescent(normTrainData, normTrainingLabels, bvalue))
 #plt.show()
-plt.plot(ROCCurve(CalcAccuracy(pr, normTestLabels), 'green', randomline = True ))
+plt.plot(ROCCurve(TPR, FPR))
+# plt.show()
+#plt.plot(bvalue, cost(pr, normTestData))
 plt.show()
