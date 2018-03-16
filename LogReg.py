@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 #REFERENCES: https://beckernick.github.io/logistic-regression-from-scratch/
 # https://matplotlib.org/api/_as_gen/matplotlib.pyplot.show.html
+#https://docs.eyesopen.com/toolkits/cookbook/python/plotting/roc.html
 
 data = numpy.genfromtxt('MNIST_CVHW3.csv', delimiter=',', dtype=int, skip_header=1)
 #print(data.shape[0], 1) Returns (8200, 1)
@@ -114,10 +115,10 @@ def CalcAccuracy(predictionLabels, normTestLabels):
 def gradientDescent(X, y, b):
     #reference https://github.com/michelucci/Logistic-Regression-Explained/blob/master/MNIST%20with%20Logistic%20Regression%20from%20scratch.ipynb
     predictions = prediction(X, b)
-    m = X.shape[0]
+    sample = X.shape[0]
     error_cost = (predictions - y).transpose()
     #return -1 / 7800 * numpy.dot(X.transpose(), y - prediction(X, b))
-    return -1.0 / m * numpy.dot(X.transpose(), error_cost)
+    return -1.0 / sample * numpy.dot(X.transpose(), error_cost)
 
 #Counts the number of true data
 def trueCount(data):
@@ -160,10 +161,30 @@ def binaryPrediciton(predictionData):
             predictionData[label] = 0
     return predictionData
 
+#Plot ROC Curve
+def ROCCurve(predictionData, color, randomline = True):
+    plt.figure()
+    plt.xlabel("False Positive Rate", fontsize = 16)
+    plt.ylabel("True Positive Rate", fontsize = 16)
+    plt.title("ROV Curve", fontsize = 16)
+
+    TPR, FPR = CalcAccuracy(predictionData, normTestLabels, color = color)
+
+    plt.plot(FPR, TPR, color=color, linewidth = 2, normTestLabels=normTestLabels)
+
+    if randomline:
+        x = [0.0, 1.0]
+        plt.plot(x, x, linestyle='dashed', color = 'blue', linewidth = 2, label='random')
+
+    plt.xlim(0.0, 0.1)
+    plt.ylim(0.0, 0.1)
+
+
+
 # Getting the b value (weights)
 bvalue = numpy.zeros(len(normTrainData[0]))  # weights
 learningRate = 1e-5
-iterator = 1000
+iterator = 100
 
 for x in range(0, iterator):
     bvalue = bvalue + learningRate * gradientDescent(normTrainData, normTrainingLabels, bvalue)
@@ -183,3 +204,5 @@ print("TPR: {} \nFPR: {}".format(TPR, FPR))
 #plt.plot(bvalue)
 #plt.plot(gradientDescent(normTrainData, normTrainingLabels, bvalue))
 #plt.show()
+plt.plot(ROCCurve(CalcAccuracy(pr, normTestLabels), 'green', randomline = True ))
+plt.show()
