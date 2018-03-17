@@ -29,19 +29,19 @@ def gradientDescent(X, y, b):
     predictions = prediction(X, b)
     sample = X.shape[0]
     error_cost = (predictions - y).transpose()
-    return -1.0 / sample * numpy.dot(X.transpose(), error_cost)
+    return -1.0 / sample * (numpy.dot(X.transpose(), error_cost))
 
 #Counts the number of true data
-def trueCount(data):
-    return sum(data)
-#
+# def trueCount(data):
+#     return sum(data)
+
 #Counts the number of false data
-def falseCount(data):
-    return (len(data) - trueCount(data))
+# def falseCount(data):
+#     return (len(data) - trueCount(data))
 
 #sigmoid function
-def sigmoid(value):
-    return 1/(1.0 + numpy.exp(-value))
+def sigmoid(z):
+    return 1/(1.0 + numpy.exp(z))
 
 #Get a array of ones
 def onesMatrix(data):
@@ -130,8 +130,8 @@ def CalcAccuracy(predictionLabels, normTestLabels):
                 FP += 1
             else:
                 FN += 1
-    print(trueCases)
-    print(falseCases)
+    # print(trueCases)
+    # print(falseCases)
     TPR = TP / float(trueCases)
     FPR = FP / float(falseCases)
     return TPR, FPR
@@ -168,20 +168,28 @@ for train, test in kf.split(data):
     # Getting the b value (weights)
     bvalue = numpy.zeros(len(normTrainData[0]))  # weights
     learningRate = 1e-4
-    iterator = 1000
+    iterator = 100
 
     for x in range(0, iterator):
         bvalue = bvalue + learningRate * gradientDescent(normTrainData, normTrainingLabels, bvalue)
 
     # # Prediction with Gradient Descent
     pr = prediction(normTestData, bvalue)
-    print(binaryPrediciton(pr))
+
+    #print(binaryPrediciton(pr))
 
     # plt.plot(cost(normTrainingLabels, normTestLabels, bvalue))
     # plt.show()
 
-    #ac = accuracy(pr, normTestLabels)
+    ac = accuracy(pr, normTestLabels)
+    print(ac)
     TPR, FPR = CalcAccuracy(pr, normTestLabels)
 print("TPR: {} \nFPR: {}".format(TPR, FPR))
-# plt.plot(ROCCurve(TPR, FPR))
+
+# plt.plot(TPR, FPR)
+# plt.xlim([0.0, 1.0])
+# plt.ylim([0.0, 1.0])
+# plt.xlabel('False Postive Rate')
+# plt.ylabel('True Positive Rate')
+# plt.show()
 # plt.show()
