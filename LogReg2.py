@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 # Normalize the data knowing the values are from 0 to 255
 def normalizeData(dataNorm):
-    return dataNorm / 255
+    return dataNorm / 255.0
 
 #If label = 6 then 0, if label = 8 then 1
 #Class 1: 6 and Class 2: 8
@@ -28,7 +28,9 @@ def gradientDescent(X, y, b):
     #reference https://github.com/michelucci/Logistic-Regression-Explained/blob/master/MNIST%20with%20Logistic%20Regression%20from%20scratch.ipynb
     predictions = prediction(X, b)
     sample = X.shape[0]
+    # error_cost = predictions - y
     error_cost = (predictions - y).transpose()
+    # return  numpy.dot(X.transpose(), predictions - y)
     return -1.0 / sample * numpy.dot(X.transpose(), error_cost)
 
 #Counts the number of true data
@@ -83,10 +85,9 @@ def binaryPrediciton(predictionData):
 def cost(X, y, b):
     pr = prediction(X, b)
     C1 = -y * numpy.log(pr)
-    C2 = (1 - y) * numpy.log(1 - pr)
-    value = C1 - C2
-    value = value.sum() / len(y)
-    return value
+    C2 = -(1 - y) * numpy.log(1 - pr)
+    value = C1 + C2
+    return sum(value) / len(y)
 
 # likelihood function
 def likelihood(data, labels, bvalue):
@@ -143,6 +144,8 @@ data = numpy.genfromtxt('MNIST_CVHW3.csv', delimiter=',', dtype=int, skip_header
 kf = KFold(n_splits = 10)
 #print(kf)
 
+print("Starting KFold")
+
 #Split the data with KFold
 for train, test in kf.split(data):
     Xytest = numpy.array(data[test])   #data
@@ -155,27 +158,35 @@ for train, test in kf.split(data):
     trainingData = numpy.array(Xytraining[:, 1: -1])
 
 
-
-
+    # print(trainingLabels)
     # Normalize Dataset and Labels
     normTestData = normalizeData(testingData)
     normTrainData = normalizeData(trainingData)
     normTestLabels = makeBinary(testingLabels)
     normTrainingLabels = makeBinary(trainingLabels)
 
+    # print(normTrainData[0])
+    # print(normTrainingLabels)
 
 
+    print("Starting Grad Decent")
     # Getting the b value (weights)
     bvalue = numpy.zeros(len(normTrainData[0]))  # weights
-    learningRate = 1e-4
+    learningRate = 1e-2
     iterator = 1000
-
+    cost_plot = []
     for x in range(0, iterator):
         bvalue = bvalue + learningRate * gradientDescent(normTrainData, normTrainingLabels, bvalue)
+        cost_plot.append( cost(normTrainData, normTrainingLabels, bvalue)  )
+
+
+    plt.plot(cost_plot)
+    plt.show()
 
     # # Prediction with Gradient Descent
     pr = prediction(normTestData, bvalue)
     print(binaryPrediciton(pr))
+
 
     # plt.plot(cost(normTrainingLabels, normTestLabels, bvalue))
     # plt.show()
