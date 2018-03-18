@@ -75,7 +75,8 @@ def accuracy(bestFitLine, testLabels):
     value = sum(bestFitLine == testLabels) / float(len(testLabels))
     return value
 
-
+#This calculates the TPR and FPR
+#Credit goes to Shah in class for helping me think through the logic of TPR and FPR
 def CalcTPRandFPR(predictionLabels, normTestLabels):
     predictionLabels = (predictionLabels > 0.5)
     trueCases = sum(normTestLabels)
