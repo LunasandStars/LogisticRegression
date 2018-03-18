@@ -51,6 +51,7 @@ def binaryPrediction(predictionData):
 
 # Cost function
 #See references above
+#Sean in class helped me with the logic for the cost function, refering me to the reference above
 def cost(X, y, b):
     pr = prediction(X, b)
     C1 = -y * numpy.log(pr)
