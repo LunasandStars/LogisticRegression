@@ -34,6 +34,7 @@ def gradientDescent(X, y, b):
     return -1.0 / sample * numpy.dot(X.transpose(), error_cost)
 
 #sigmoid function
+#See references above
 def sigmoid(value):
     return 1/(1.0 + numpy.exp(-value))
 
@@ -49,6 +50,7 @@ def binaryPrediction(predictionData):
 
 
 # Cost function
+#See references above
 def cost(X, y, b):
     pr = prediction(X, b)
     C1 = -y * numpy.log(pr)

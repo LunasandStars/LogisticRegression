@@ -16,8 +16,8 @@
       <file leaf-file-name="LogisticRegression.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/LogisticRegression.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="171" column="0" lean-forward="false" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+            <state relative-caret-position="-1070">
+              <caret line="36" column="15" lean-forward="false" selection-start-line="36" selection-start-column="15" selection-end-line="36" selection-end-column="15" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -427,8 +427,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/LogisticRegression.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="171" column="0" lean-forward="false" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+        <state relative-caret-position="-1070">
+          <caret line="36" column="15" lean-forward="false" selection-start-line="36" selection-start-column="15" selection-end-line="36" selection-end-column="15" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
